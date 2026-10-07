@@ -1,0 +1,206 @@
+export interface Service {
+  slug: string
+  title: string
+  headline: string
+  subheadline: string
+  description: string
+  capabilities: string[]
+  cta: string
+  ctaLink: string
+  accentColor: string
+  icon: string
+  what_we_do_text?: string | null
+}
+
+export const services: Service[] = [
+  {
+    slug: 'creative',
+    title: 'Creative',
+    headline: "Ideas that don't just look good — they work harder.",
+    subheadline: 'Bold, culturally sharp creative that turns brands into conversation starters.',
+    description: 'We craft bold, culturally sharp creative that turns brands into conversation starters and category leaders in Sri\u00a0Lanka and beyond. Great creative isn\'t about beauty — it\'s about impact.',
+    capabilities: [
+      'Big Idea Development & Creative Strategy',
+      '360° Integrated Campaigns (ATL, BTL, Digital & Social)',
+      'Brand Identity & Visual Systems',
+      'ATL & OOH Advertising',
+      'Packaging Design & Brand Applications',
+      'Tactical & Thematic Campaigns',
+      'Purpose-Driven & Cause Marketing',
+    ],
+    cta: 'View Our Creative Work',
+    ctaLink: '/work?category=creative',
+    accentColor: '#E8005A',
+    icon: '◈',
+  },
+  {
+    slug: 'digital',
+    title: 'Digital',
+    headline: 'Where attention becomes growth.',
+    subheadline: 'Digital experiences and performance engines that drive real business results.',
+    description: 'We build digital experiences and performance engines that don\'t chase vanity metrics — they drive real business results. Every platform is a growth channel; every data point is an advantage.',
+    capabilities: [
+      'Digital Strategy & Roadmap Development',
+      'Social Media Management & Content Systems',
+      'Performance Marketing (Meta, Google, TikTok, Programmatic)',
+      'SEO & Organic Growth',
+      'Data Analytics, Attribution & Optimization',
+      'Marketing Automation & CRM Integration',
+    ],
+    cta: 'View Our Digital Work',
+    ctaLink: '/work?category=digital',
+    accentColor: '#7B2FBE',
+    icon: '◉',
+  },
+  {
+    slug: 'play',
+    title: 'Play',
+    headline: 'Stories worth watching. Again and again.',
+    subheadline: 'Cinematic video, animation, and motion content that builds lasting connections.',
+    description: 'We create cinematic video, animation, and motion content that cuts through the noise and builds lasting emotional connections. We turn ideas into visuals that people remember and share.',
+    capabilities: [
+      'TV Commercials & Brand Films',
+      '2D & 3D Animation',
+      'Motion Graphics & Explainers',
+      'Social-First Video Content',
+      'Audio Production & Sound Design',
+      'Immersive & VR Experiences',
+    ],
+    cta: 'View Our Production Work',
+    ctaLink: '/work?category=productions',
+    accentColor: '#1B3FB5',
+    icon: '▶',
+  },
+  {
+    slug: 'tech',
+    title: 'Tech',
+    headline: 'Technology that powers ambition.',
+    subheadline: 'Robust digital platforms and custom solutions that make brands future-ready.',
+    description: 'We develop robust digital platforms and custom solutions that make brands more efficient, scalable, and future-ready. We build tech that doesn\'t just work — it wins.',
+    capabilities: [
+      'Website & E-commerce Development',
+      'Mobile Applications',
+      'Custom Software & Dashboards',
+      'System Integrations & API Development',
+      'Martech Stack Implementation',
+      'IoT & Automation Solutions',
+    ],
+    cta: 'View Our Tech Work',
+    ctaLink: '/work?category=martech',
+    accentColor: '#00B4B4',
+    icon: '◎',
+  },
+  {
+    slug: 'ai-content',
+    title: 'AI Content',
+    headline: 'Human insight. Machine speed.',
+    subheadline: 'High-volume, on-brand content at scale — without losing authenticity.',
+    description: 'We combine strategic creativity with advanced AI to produce high-volume, on-brand content at scale — without losing authenticity. AI won\'t replace great marketers. But marketers who use AI will outperform those who don\'t.',
+    capabilities: [
+      'AI-Powered Content Strategy',
+      'Automated Social Media & Blog Content',
+      'Personalized Content at Scale',
+      'AI Image & Video Generation Workflows',
+      'SEO-Optimized Content Engines',
+      'Team Training & AI Capability Building',
+    ],
+    cta: 'View Our AI Content Work',
+    ctaLink: '/work',
+    accentColor: '#E8005A',
+    icon: '◈',
+  },
+  {
+    slug: 'performance-marketing',
+    title: 'Performance Marketing',
+    headline: 'Data-driven strategies that turn ad spend into high-ROI revenue engines.',
+    subheadline: 'Precision targeting, continuous optimization, and measurable growth across all paid channels.',
+    description: 'We engineer data-driven performance marketing campaigns that eliminate guesswork and maximize ROI. From search and social ads to full-funnel attribution and automated growth engines, we transform media spend into predictable, scalable revenue for your business.',
+    capabilities: [
+      'Paid Search & PPC (Google Ads)',
+      'Paid Social Campaigns (Meta, LinkedIn, TikTok)',
+      'Conversion Rate Optimization (CRO)',
+      'Data Analytics & Multi-Touch Attribution',
+      'Programmatic & Retargeting Media',
+      'Funnel Automation & Growth Hacking',
+    ],
+    cta: 'View Our Performance Work',
+    ctaLink: '/work?category=digital',
+    accentColor: '#FF5722',
+    icon: '📈',
+  },
+  {
+    slug: 'events',
+    title: 'Events & Experiences',
+    headline: 'Moments people talk about for years.',
+    subheadline: 'Unforgettable physical, hybrid, and virtual experiences that turn audiences into advocates.',
+    description: 'We design unforgettable physical, hybrid, and virtual experiences that turn audiences into loyal advocates and deliver measurable impact. In a digital world, the most powerful thing you can do is bring people together.',
+    capabilities: [
+      'Brand Activations & Product Launches',
+      'Corporate Events & Conferences',
+      'Experiential Marketing Campaigns',
+      'Festival & Cultural Partnerships',
+    ],
+    cta: 'View Our Events Work',
+    ctaLink: '/work',
+    accentColor: '#7B2FBE',
+    icon: '◑',
+  },
+]
+
+export const clients = [
+  'Ceylon Tea',
+  'Dialog Axiata',
+  'John Keells',
+  'HNB',
+  'SriLankan Airlines',
+  'Unilever',
+  'MAS Holdings',
+  'Hemas',
+  'Softlogic',
+  'Yamaha',
+  'PepsiCo',
+  'Elephant House',
+]
+
+export const offices = [
+  {
+    city: 'Colombo',
+    country: 'Sri\u00a0Lanka',
+    role: 'Headquarters',
+    description: 'Strategy, Creative, Digital, Production, Tech & Innovation Hub',
+    phone: '+94 75 525 3006',
+    email: 'hello@loops.lk',
+    address: '2B, Sulaiman Terrace, Colombo 05, Sri\u00a0Lanka',
+    coords: { lat: 6.9, lng: 79.85 },
+  },
+  {
+    city: 'Doha',
+    country: 'Qatar',
+    role: 'Middle East Office',
+    description: 'Middle East Operations',
+    phone: '+974 1234 5678',
+    email: 'doha@loopsintegrated.com',
+    address: 'Office 12, Building 45, West Bay, Doha, Qatar',
+    coords: { lat: 25.3, lng: 51.5 },
+  },
+  {
+    city: 'Dubai',
+    country: 'UAE',
+    role: 'GCC Regional Hub',
+    description: 'Regional Hub for GCC Markets',
+    phone: '+971 4 123 4567',
+    email: 'dubai@loopsintegrated.com',
+    address: 'Office 210, Creative Tower, Media City, Dubai, UAE',
+    coords: { lat: 25.2, lng: 55.27 },
+  },
+  {
+    city: 'Sydney',
+    country: 'Australia',
+    role: 'Asia-Pacific Office',
+    description: 'Asia-Pacific & Oceania',
+    phone: '+61 2 9876 5432',
+    email: 'sydney@loopsintegrated.com',
+    address: 'Suite 301, 45 Harris Street, Pyrmont, Sydney NSW 2009',
+    coords: { lat: -33.88, lng: 151.2 },
+  },
+]

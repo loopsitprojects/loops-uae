@@ -1,0 +1,12 @@
+---
+deployment:
+  tasks:
+    # Target directory for uat.loopsintegrated.co (adjust $USER if needed, or public_html path)
+    - export DEPLOYPATH=/home/$USER/public_html/uat.loopsintegrated.co
+    - test -d "$DEPLOYPATH" || export DEPLOYPATH=/home/$USER/uat.loopsintegrated.co
+    - test "$PWD" != "$DEPLOYPATH" && test -d "$DEPLOYPATH" && /bin/cp -R * $DEPLOYPATH/ || true
+    - test "$PWD" != "$DEPLOYPATH" && test -d "$DEPLOYPATH" && /bin/cp .htaccess $DEPLOYPATH/.htaccess || true
+    - test -d "$DEPLOYPATH" && cd $DEPLOYPATH || true
+    - php artisan filament:assets || true
+    - php artisan storage:link || true
+    - php artisan optimize:clear || true

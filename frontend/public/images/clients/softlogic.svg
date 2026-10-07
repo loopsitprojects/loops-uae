@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 55" fill="none">
+  <!-- softlogic in deep brand purple -->
+  <text x="2" y="38" font-family="Georgia, 'Times New Roman', serif" font-size="33" font-weight="500" letter-spacing="-0.5" fill="#4A2580">softlogic</text>
+  
+  <!-- LiFE stylized purple brand mark -->
+  <g transform="translate(138, 2)">
+    <!-- L -->
+    <path d="M5 5 C5 30 3 38 24 40 C29 41 33 40 36 39" stroke="#4A2580" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- i with person dot -->
+    <path d="M48 18 L48 39" stroke="#4A2580" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <circle cx="48" cy="7" r="4.5" fill="#7C43B6"/>
+    
+    <!-- F -->
+    <path d="M66 6 L66 39 M66 6 L90 6 M66 21 L85 21" stroke="#4A2580" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- E -->
+    <path d="M102 6 L102 39 M102 6 L124 6 M102 21 L120 21 M102 39 L126 39" stroke="#4A2580" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>

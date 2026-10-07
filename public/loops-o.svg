@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <defs>
+    <!-- Perfectly Centered Doughnut Ring Mask -->
+    <clipPath id="loops-ring-mask">
+      <path d="M 500 40 A 460 460 0 1 0 499.99 40 Z M 500 260 A 240 240 0 1 1 500.01 260 Z" fill-rule="evenodd"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#loops-ring-mask)">
+    <!-- 1. Hot Pink Stripe (Top-Left) -->
+    <polygon points="-200,-200 870,-200 -200,870" fill="#FF006E" />
+
+    <!-- 2. Purple Stripe (Top-Right to Bottom-Left) -->
+    <polygon points="870,-200 1200,-200 -200,1200 -200,870" fill="#7B2CBF" />
+
+    <!-- 3. Royal Blue Stripe (Middle-Right to Bottom-Center) -->
+    <polygon points="1200,-200 1520,-200 -200,1520 -200,1200" fill="#0052D4" />
+
+    <!-- 4. Bright Cyan / Teal Stripe (Bottom-Right) -->
+    <polygon points="1520,-200 2200,-200 2200,1520" fill="#17C8C3" />
+  </g>
+</svg>
