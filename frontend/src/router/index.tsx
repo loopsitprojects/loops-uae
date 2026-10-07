@@ -16,6 +16,7 @@ import NotFound from '@/pages/NotFound'
 
 const getBasename = () => {
   const path = window.location.pathname
+  if (path.startsWith('/uae')) return '/uae'
   if (path.startsWith('/loopswebsite')) return '/loopswebsite'
   return '/'
 }

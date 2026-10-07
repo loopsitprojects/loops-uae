@@ -1,5 +1,6 @@
 const getSubfolder = () => {
   const path = window.location.pathname
+  if (path.startsWith('/uae')) return '/uae'
   if (path.startsWith('/loopswebsite')) return '/loopswebsite'
   return ''
 }

@@ -19,7 +19,7 @@ Route::get('/{any}', function () {
         if (file_exists($path)) {
             $content = file_get_contents($path);
             $buildUrl = asset('build');
-            $content = preg_replace('#(https?://[^/\"]+)?(/loopswebsite)?(/public)?/build#', $buildUrl, $content);
+            $content = preg_replace('#(https?://[^/\"]+)?(/loopswebsite|/uae)?(/public)?/build#', $buildUrl, $content);
 
             // Server-Side Media Rendering & Preloading: Inject high-priority image and video preloads into HTML head
             $preloadTags = "\n<!-- Server-Side Media Preload Engine -->\n";
