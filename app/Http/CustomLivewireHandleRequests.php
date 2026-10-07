@@ -26,9 +26,11 @@ class CustomLivewireHandleRequests extends BaseHandleRequests
 
         if (!empty($subfolder) && $subfolder !== '/') {
             $subfolder = '/' . trim($subfolder, '/');
-            if (!str_starts_with($uri, $subfolder)) {
-                $uri = $subfolder . '/' . ltrim($uri, '/');
+            // Remove redundant leading subfolder to prevent url() from doubling it (e.g. /uae/uae/...)
+            if (str_starts_with($uri, $subfolder . '/')) {
+                $uri = substr($uri, strlen($subfolder));
             }
+            return rtrim($appUrl, '/') . '/' . ltrim($uri, '/');
         }
 
         return $uri;

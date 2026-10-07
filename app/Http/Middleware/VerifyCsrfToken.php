@@ -16,11 +16,14 @@ class VerifyCsrfToken extends Middleware
         'livewire/update',
         '*/livewire/*',
         '*/livewire/update',
+        'uae/livewire/*',
+        'uae/livewire/update',
         'admin/livewire/*',
         'admin/login',
         'admin/*',
         'loops-internal-portal/*',
         'loops-internal-portal/login',
+        'uae/loops-internal-portal/*',
         'api/*',
     ];
 }

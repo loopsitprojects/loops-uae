@@ -71,4 +71,4 @@ Route::get('/{any}', function () {
     }
 
     return response('Front-end build file not found. Please run npm run build.', 404);
-})->where('any', '^(?!api|storage|works|livewire.*|vendor|build|fonts|css|js|images|videos|favicon\.ico|_debugbar|' . preg_quote(config('services.filament.path', 'loops-internal-portal'), '#') . ').*$');
+})->where('any', '^(?!api|storage|works|livewire.*|uae/livewire.*|vendor|build|fonts|css|js|images|videos|favicon\.ico|_debugbar|' . preg_quote(config('services.filament.path', 'loops-internal-portal'), '#') . ').*$');
