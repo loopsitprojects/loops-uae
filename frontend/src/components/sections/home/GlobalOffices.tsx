@@ -72,7 +72,6 @@ export default function GlobalOffices() {
           <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-7">
             <p className="text-white font-display font-bold text-xl md:text-2xl tracking-tight mb-4">Global Presence</p>
             <h2 className="heading-xl fluid-xl text-white mb-6">
-              {"Sri\u00a0Lankan roots."}<br />
               <span className="gradient-text">Global reach.</span>
             </h2>
             <p className="text-white/50 fluid-sm leading-relaxed mb-10 max-w-2xl">
