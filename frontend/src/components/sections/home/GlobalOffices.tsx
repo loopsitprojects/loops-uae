@@ -4,7 +4,7 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { api, Office } from '@/lib/api'
 import { offices as fallbackOffices } from '@/data/services'
-import LoopsMap from '@/components/ui/LoopsMap'
+import LoopsMap, { isOfficeHQ, HQ_COLOR, BRANCH_COLORS } from '@/components/ui/LoopsMap'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -70,10 +70,7 @@ export default function GlobalOffices() {
 
           {/* Left — copy */}
           <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-7">
-            <p className="text-white font-display font-bold text-xl md:text-2xl tracking-tight mb-4">Global Presence</p>
-            <h2 className="heading-xl fluid-xl text-white mb-6">
-              <span className="gradient-text">Global reach.</span>
-            </h2>
+            <h2 className="text-white font-display font-bold text-xl md:text-2xl tracking-tight mb-4">Global Presence</h2>
             <p className="text-white/50 fluid-sm leading-relaxed mb-10 max-w-2xl">
               What started as a bold idea in Colombo has now grown into an international creative-led agency.
               With offices across Asia, the Middle East, and Oceania, we combine local market expertise with a global perspective.
@@ -84,6 +81,7 @@ export default function GlobalOffices() {
               {officesList.map((office, i) => {
                 const isActive = activeOffice === i
                 const label = office.city || office.country || office.role || `Office ${i + 1}`
+                const isHq = isOfficeHQ(office)
                 return (
                   <button
                     key={office.id || office.city || i}
@@ -96,10 +94,19 @@ export default function GlobalOffices() {
                   >
                     <span
                       className={`w-2 h-2 rounded-full transition-transform duration-300 ${
-                        isActive ? 'bg-brand-pink scale-125 shadow-[0_0_8px_rgba(232,0,90,0.9)]' : 'bg-white/70'
+                        isActive
+                          ? (isHq ? 'bg-red-500 scale-125 shadow-[0_0_8px_rgba(255,43,67,0.9)]' : 'bg-brand-pink scale-125 shadow-[0_0_8px_rgba(232,0,90,0.9)]')
+                          : (isHq ? 'bg-red-500' : 'bg-white/70')
                       }`}
                     />
                     <span className={isActive ? 'text-black' : 'text-white'}>{label}</span>
+                    {isHq && (
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold leading-none ${
+                        isActive ? 'bg-red-500 text-white' : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                      }`}>
+                        HQ
+                      </span>
+                    )}
                   </button>
                 )
               })}
@@ -141,8 +148,8 @@ export default function GlobalOffices() {
                               {officesList[activeOffice].country}
                             </span>
                           )}
-                          {officesList[activeOffice].is_headquarters && (
-                            <span className="text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-full bg-pink-500/25 text-pink-200 border border-pink-400/50 font-bold shadow-sm">
+                          {isOfficeHQ(officesList[activeOffice]) && (
+                            <span className="text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40 font-bold shadow-sm">
                               HQ
                             </span>
                           )}
@@ -227,32 +234,41 @@ export default function GlobalOffices() {
 
       {/* Map caption (Desktop only) */}
       <div className="w-full max-w-[1920px] mx-auto px-6 hidden md:flex flex-nowrap items-center justify-center gap-2 lg:gap-3 mt-6 overflow-x-auto no-scrollbar">
-        {officesList.map((o, i) => {
-          const colors = ['#E8005A', '#7B2FBE', '#1B3FB5', '#00B4B4']
-          const isActive = activeOffice === i
-          const label = o.city || o.country || o.role || `Office ${i + 1}`
-          return (
-            <button
-              key={o.id || o.city || i}
-              onClick={() => setActiveOffice(i)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer border whitespace-nowrap shrink-0 ${
-                isActive
-                  ? 'bg-white/15 text-white font-bold scale-105 border-white/30 shadow-lg'
-                  : 'bg-white/5 text-white/90 hover:text-white hover:bg-white/15 hover:border-white/20 border-white/10'
-              }`}
-            >
-              <div
-                className={`w-2 h-2 rounded-full shrink-0 transition-transform ${
-                  isActive ? 'scale-125 shadow-[0_0_8px_rgba(255,255,255,0.8)]' : ''
+        {(() => {
+          let branchIdx = 0
+          return officesList.map((o, i) => {
+            const isHq = isOfficeHQ(o)
+            const dotColor = isHq ? HQ_COLOR : BRANCH_COLORS[(branchIdx++) % BRANCH_COLORS.length]
+            const isActive = activeOffice === i
+            const label = o.city || o.country || o.role || `Office ${i + 1}`
+            return (
+              <button
+                key={o.id || o.city || i}
+                onClick={() => setActiveOffice(i)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer border whitespace-nowrap shrink-0 ${
+                  isActive
+                    ? 'bg-white/15 text-white font-bold scale-105 border-white/30 shadow-lg'
+                    : 'bg-white/5 text-white/90 hover:text-white hover:bg-white/15 hover:border-white/20 border-white/10'
                 }`}
-                style={{ background: colors[i % colors.length] }}
-              />
-              <span className="font-mono text-xs font-bold uppercase tracking-wider text-white">
-                {label}
-              </span>
-            </button>
-          )
-        })}
+              >
+                <div
+                  className={`w-2 h-2 rounded-full shrink-0 transition-transform ${
+                    isActive ? 'scale-125 shadow-[0_0_8px_rgba(255,255,255,0.8)]' : ''
+                  }`}
+                  style={{ background: dotColor }}
+                />
+                <span className="font-mono text-xs font-bold uppercase tracking-wider text-white">
+                  {label}
+                </span>
+                {isHq && (
+                  <span className="text-[9px] px-1 py-0.2 rounded bg-red-500/30 text-red-300 border border-red-500/40 font-mono font-bold leading-none">
+                    HQ
+                  </span>
+                )}
+              </button>
+            )
+          })
+        })()}
       </div>
     </section>
   )

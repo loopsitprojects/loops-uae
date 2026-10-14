@@ -17,15 +17,26 @@ interface Props {
 
 type LabelDir = 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right'
 
-const DEFAULT_COLORS = ['#E8005A', '#1B3FB5', '#7B2FBE', '#00B4B4']
+export const HQ_COLOR = '#FF2B43' // Distinctive vibrant red strictly reserved for HQ
+export const BRANCH_COLORS = ['#00B4B4', '#7B2FBE', '#1B3FB5', '#06B6D4', '#8B5CF6', '#3B82F6', '#10B981']
 
-function getLabelDir(city: string): LabelDir {
-  const c = city.toLowerCase()
-  if (c.includes('london')) return 'top-left'
+export function isOfficeHQ(o: Partial<Office> | undefined | null): boolean {
+  if (!o) return false
+  const val = o.is_headquarters as unknown
+  if (val === true || val === 1 || val === '1' || val === 'true') {
+    return true
+  }
+  const r = (o.role || '').toLowerCase().trim()
+  return r === 'headquarters' || r === 'hq' || r.startsWith('headquarter')
+}
+
+function getLabelDir(cityOrCountry: string): LabelDir {
+  const c = cityOrCountry.toLowerCase()
+  if (c.includes('london') || c.includes('united kingdom') || c.includes('uk')) return 'top-left'
   if (c.includes('adliswil') || c.includes('switzerland')) return 'bottom-left'
-  if (c.includes('dubai')) return 'top-right'
+  if (c.includes('dubai') || c.includes('uae')) return 'top-right'
   if (c.includes('qatar') || c.includes('doha')) return 'bottom-left'
-  if (c.includes('colombo')) return 'bottom-left'
+  if (c.includes('colombo') || c.includes('sri lanka') || c.includes('sri\u00a0lanka')) return 'bottom-left'
   if (c.includes('singapore')) return 'bottom-right'
   if (c.includes('sydney') || c.includes('nsw') || c.includes('australia')) return 'top-left'
   if (c.includes('suva') || c.includes('fiji')) return 'top-left'
@@ -78,23 +89,23 @@ function rgba(hex: string, a: number) {
   return `rgba(${r},${g},${b},${a})`
 }
 
-function getCustomTransform(city: string, labelDir: LabelDir): string {
-  const c = city.toLowerCase()
+function getCustomTransform(cityOrCountry: string, labelDir: LabelDir): string {
+  const c = cityOrCountry.toLowerCase()
   if (c.includes('qatar') || c.includes('doha')) {
     // Shift Qatar down-left towards Red Sea/East Africa to create generous spacing from Dubai
     return 'translate(-108%, 14px)'
   }
-  if (c.includes('dubai')) {
+  if (c.includes('dubai') || c.includes('uae')) {
     // Shift Dubai up-right towards Central Asia
     return 'translate(10px, calc(-100% - 10px))'
   }
   if (c.includes('adliswil') || c.includes('switzerland')) {
     return 'translate(-100%, 14px)'
   }
-  if (c.includes('london')) {
+  if (c.includes('london') || c.includes('united kingdom') || c.includes('uk')) {
     return 'translate(-100%, calc(-100% - 10px))'
   }
-  if (c.includes('colombo')) {
+  if (c.includes('colombo') || c.includes('sri lanka') || c.includes('sri\u00a0lanka')) {
     return 'translate(-100%, 14px)'
   }
   if (c.includes('singapore')) {
@@ -132,31 +143,39 @@ export default function LoopsMap({
   // Keep activeRef in sync without restarting the RAF loop
   useEffect(() => { activeRef.current = activeIndex }, [activeIndex])
 
-  // Map dynamic or static fallback offices
+  // Map dynamic or static fallback offices without hardcoding any headquarters
   const mappedOffices = useMemo(() => {
     const list = offices && offices.length ? offices : [
-      { city: 'Colombo', country: 'Sri\u00a0Lanka', role: 'Headquarters', lat: 6.9147, lng: 79.8484, is_headquarters: true },
+      { city: 'Colombo', country: 'Sri\u00a0Lanka', role: 'Headquarters', lat: 6.9147, lng: 79.8484, is_headquarters: false },
       { city: 'Dubai', country: 'UAE', role: 'Middle East & Africa', lat: 25.1972, lng: 55.2744, is_headquarters: false },
       { city: 'London', country: 'UK', role: 'Europe', lat: 51.5144, lng: -0.0803, is_headquarters: false },
       { city: 'Singapore', country: 'Singapore', role: 'Southeast Asia', lat: 1.2838, lng: 103.8516, is_headquarters: false },
     ]
-    return list.map((o, idx) => ({
-      name: o.city || o.country || o.role || `Office ${idx + 1}`,
-      role: o.role || o.country || '',
-      lat: o.lat ?? 0,
-      lng: o.lng ?? 0,
-      color: DEFAULT_COLORS[idx % DEFAULT_COLORS.length],
-      labelDir: getLabelDir(o.city || o.country || ''),
-      is_headquarters: !!o.is_headquarters
-    }))
+
+    let branchCount = 0
+    return list.map((o, idx) => {
+      const isHq = isOfficeHQ(o)
+      const color = isHq ? HQ_COLOR : BRANCH_COLORS[(branchCount++) % BRANCH_COLORS.length]
+
+      return {
+        name: o.city || o.country || o.role || `Office ${idx + 1}`,
+        country: o.country || '',
+        role: o.role || o.country || '',
+        lat: o.lat ?? 0,
+        lng: o.lng ?? 0,
+        color,
+        labelDir: getLabelDir(`${o.city || ''} ${o.country || ''}`),
+        is_headquarters: isHq,
+      }
+    })
   }, [offices])
 
-  // Generate connection arcs dynamically connecting branches to headquarters (Colombo)
+  // Generate connection arcs dynamically connecting branches to headquarters
   const arcs = useMemo(() => {
     const hqIdx = mappedOffices.findIndex(o => o.is_headquarters)
     const hqIndex = hqIdx !== -1 ? hqIdx : 0
     const list: [number, number][] = []
-    mappedOffices.forEach((o, i) => {
+    mappedOffices.forEach((_, i) => {
       if (i !== hqIndex) {
         list.push([hqIndex, i])
       }
@@ -353,52 +372,60 @@ export default function LoopsMap({
         if (!pt) return
         const { x, y } = pt
         const isActive = act === i
+        const isHq = o.is_headquarters
         const phase = t * 1.6 + i * 1.3
 
-        // Pulse ring 1
+        // Pulse ring 1 (dynamic red pulse for HQ, standard pulse for branches)
         const p1 = (phase % (Math.PI * 2)) / (Math.PI * 2)
-        ctx.strokeStyle = rgba(o.color, (1 - p1) * (isActive ? 0.85 : 0.5))
-        ctx.lineWidth = isActive ? 2 : 1.5
+        const alpha1 = (1 - p1) * (isActive ? 0.9 : isHq ? 0.8 : 0.45)
+        ctx.strokeStyle = rgba(o.color, alpha1)
+        ctx.lineWidth = isActive ? 2.2 : isHq ? 2.0 : 1.2
         ctx.beginPath()
-        ctx.arc(x, y, (isActive ? 14 : 10) + p1 * (isActive ? 36 : 26), 0, Math.PI * 2)
+        const baseR1 = isActive ? 14 : isHq ? 12 : 9
+        const expandR1 = isActive ? 36 : isHq ? 32 : 22
+        ctx.arc(x, y, baseR1 + p1 * expandR1, 0, Math.PI * 2)
         ctx.stroke()
 
-        // Pulse ring 2
-        const p2 = ((phase + Math.PI) % (Math.PI * 2)) / (Math.PI * 2)
-        ctx.strokeStyle = rgba(o.color, (1 - p2) * (isActive ? 0.5 : 0.3))
-        ctx.lineWidth = 1
-        ctx.beginPath()
-        ctx.arc(x, y, (isActive ? 8 : 6) + p2 * (isActive ? 22 : 16), 0, Math.PI * 2)
-        ctx.stroke()
+        // Pulse ring 2 (always animated for active or HQ in red)
+        if (isActive || isHq) {
+          const p2 = ((phase + Math.PI) % (Math.PI * 2)) / (Math.PI * 2)
+          ctx.strokeStyle = rgba(o.color, (1 - p2) * (isActive ? 0.6 : 0.45))
+          ctx.lineWidth = 1.2
+          ctx.beginPath()
+          const baseR2 = isActive ? 8 : 7
+          const expandR2 = isActive ? 22 : 18
+          ctx.arc(x, y, baseR2 + p2 * expandR2, 0, Math.PI * 2)
+          ctx.stroke()
+        }
 
         // Glow halo
-        const hR = isActive ? 28 : 18
+        const hR = isActive ? 28 : isHq ? 24 : 16
         const halo = ctx.createRadialGradient(x, y, 0, x, y, hR)
-        halo.addColorStop(0, rgba(o.color, isActive ? 0.65 : 0.4))
-        halo.addColorStop(0.5, rgba(o.color, isActive ? 0.22 : 0.12))
+        halo.addColorStop(0, rgba(o.color, isActive ? 0.75 : isHq ? 0.65 : 0.35))
+        halo.addColorStop(0.5, rgba(o.color, isActive ? 0.28 : isHq ? 0.22 : 0.1))
         halo.addColorStop(1, rgba(o.color, 0))
         ctx.fillStyle = halo
         ctx.beginPath()
         ctx.arc(x, y, hR, 0, Math.PI * 2)
         ctx.fill()
 
-        // Static ring
-        if (isActive) {
-          ctx.strokeStyle = rgba(o.color, 0.7)
-          ctx.lineWidth = 2
+        // Static outer ring (visible on active OR HQ red point)
+        if (isActive || isHq) {
+          ctx.strokeStyle = rgba(o.color, isActive ? 0.9 : 0.7)
+          ctx.lineWidth = isActive ? 2 : 1.6
           ctx.beginPath()
-          ctx.arc(x, y, 9, 0, Math.PI * 2)
+          ctx.arc(x, y, isActive ? 9 : 7.5, 0, Math.PI * 2)
           ctx.stroke()
         }
 
-        // Centre dot
+        // Centre dot (red pointed for HQ)
         ctx.fillStyle = o.color
         ctx.beginPath()
-        ctx.arc(x, y, isActive ? 5.5 : 4, 0, Math.PI * 2)
+        ctx.arc(x, y, isActive ? 5.5 : isHq ? 5 : 3.8, 0, Math.PI * 2)
         ctx.fill()
         ctx.fillStyle = '#ffffff'
         ctx.beginPath()
-        ctx.arc(x, y, isActive ? 2.5 : 1.8, 0, Math.PI * 2)
+        ctx.arc(x, y, isActive ? 2.5 : isHq ? 2.2 : 1.6, 0, Math.PI * 2)
         ctx.fill()
       })
 
@@ -420,7 +447,7 @@ export default function LoopsMap({
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
       {labels.map(o => {
-        const transform = getCustomTransform(o.name, o.labelDir)
+        const transform = getCustomTransform(`${o.name} ${o.country || ''}`, o.labelDir)
 
         return (
           <div
@@ -429,25 +456,36 @@ export default function LoopsMap({
             style={{ left: `${o.xp}%`, top: `${o.yp}%`, transform }}
           >
             <div
-              className="px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-black/90 backdrop-blur-md border shadow-2xl text-left"
+              className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-black/90 backdrop-blur-md border shadow-2xl text-left transition-all ${
+                o.is_headquarters ? 'ring-1 ring-red-500/60 shadow-[0_0_20px_rgba(255,43,67,0.35)]' : ''
+              }`}
               style={{
-                borderColor: `${o.color}88`,
-                boxShadow: `0 4px 16px rgba(0,0,0,0.8), 0 0 12px ${o.color}33`,
+                borderColor: o.is_headquarters ? '#FF2B43' : `${o.color}88`,
+                boxShadow: o.is_headquarters
+                  ? '0 4px 16px rgba(0,0,0,0.8), 0 0 16px rgba(255,43,67,0.45)'
+                  : `0 4px 16px rgba(0,0,0,0.8), 0 0 12px ${o.color}33`,
                 whiteSpace: 'nowrap',
               }}
             >
-              <p
-                className="text-white font-bold leading-none mb-0.5 sm:mb-1 tracking-tight text-[0.56rem] sm:text-[0.72rem]"
-                style={{ fontFamily: "'Poppins', sans-serif", textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}
-              >
-                {o.name}
-              </p>
+              <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
+                <p
+                  className="text-white font-bold leading-none tracking-tight text-[0.56rem] sm:text-[0.72rem]"
+                  style={{ fontFamily: "'Poppins', sans-serif", textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}
+                >
+                  {o.name}
+                </p>
+                {o.is_headquarters && (
+                  <span className="px-1.5 py-0.5 rounded bg-red-600/30 text-red-300 border border-red-500/50 text-[0.45rem] font-mono font-bold tracking-wider uppercase leading-none shadow-sm">
+                    HQ
+                  </span>
+                )}
+              </div>
               {Boolean(o.role?.trim()) && (
                 <p
                   className="font-mono text-[0.44rem] sm:text-[0.54rem] font-semibold uppercase tracking-wider leading-none"
                   style={{ color: '#F1F5F9', textShadow: '0 1px 4px rgba(0,0,0,0.95)' }}
                 >
-                  <span style={{ color: o.color === '#E8005A' ? '#FF6B9D' : o.color, marginRight: 3 }}>●</span>
+                  <span style={{ color: o.color, marginRight: 3 }}>●</span>
                   {o.role}
                 </p>
               )}
