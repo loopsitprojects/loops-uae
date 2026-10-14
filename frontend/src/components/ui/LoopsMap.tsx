@@ -23,11 +23,7 @@ export const BRANCH_COLORS = ['#00B4B4', '#7B2FBE', '#1B3FB5', '#06B6D4', '#8B5C
 export function isOfficeHQ(o: Partial<Office> | undefined | null): boolean {
   if (!o) return false
   const val = o.is_headquarters as unknown
-  if (val === true || val === 1 || val === '1' || val === 'true') {
-    return true
-  }
-  const r = (o.role || '').toLowerCase().trim()
-  return r === 'headquarters' || r === 'hq' || r.startsWith('headquarter')
+  return val === true || val === 1 || val === '1' || val === 'true'
 }
 
 function getLabelDir(cityOrCountry: string): LabelDir {

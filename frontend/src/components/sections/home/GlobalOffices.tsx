@@ -19,6 +19,14 @@ export default function GlobalOffices() {
       .then(res => {
         if (res && res.data && res.data.length) {
           setOfficesList(res.data)
+          // Default active office to whichever office is marked as HQ, or Dubai, rather than index 0 (Sri Lanka)
+          const hqIdx = res.data.findIndex((o: Office) => isOfficeHQ(o))
+          if (hqIdx !== -1) {
+            setActiveOffice(hqIdx)
+          } else {
+            const dubaiIdx = res.data.findIndex((o: Office) => (o.city || '').toLowerCase().includes('dubai'))
+            if (dubaiIdx !== -1) setActiveOffice(dubaiIdx)
+          }
         } else {
           setOfficesList(fallbackOffices as any[])
         }
@@ -70,7 +78,9 @@ export default function GlobalOffices() {
 
           {/* Left — copy */}
           <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-7">
-            <h2 className="text-white font-display font-bold text-xl md:text-2xl tracking-tight mb-4">Global Presence</h2>
+            <h2 className="heading-xl fluid-xl text-white mb-6 font-display font-bold">
+              Global Presence
+            </h2>
             <p className="text-white/50 fluid-sm leading-relaxed mb-10 max-w-2xl">
               What started as a bold idea in Colombo has now grown into an international creative-led agency.
               With offices across Asia, the Middle East, and Oceania, we combine local market expertise with a global perspective.
